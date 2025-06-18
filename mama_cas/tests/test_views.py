@@ -100,6 +100,18 @@ class LoginViewTests(TestCase):
         self.assertTrue(response['Location'].startswith(self.service_url))
         self.assertTrue(st.ticket in response['Location'])
 
+    def test_login_view_redirect_to_next(self):
+        """
+        When called with a ``next`` parameter, a ``POST`` request to the
+        view should authenticate and login the user, then redirect to the
+        supplied URL.
+        """
+        expectedNextUrl = "http://example.com"
+        url = reverse("cas_login") + "?next=%s" % expectedNextUrl
+        response = self.client.post(url, self.user_info)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response["Location"], expectedNextUrl)
+
     def test_login_view_renew(self):
         """
         When called with a logged in user, a ``GET`` request to the

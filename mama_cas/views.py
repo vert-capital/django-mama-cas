@@ -144,13 +144,13 @@ class LoginView(CsrfProtectMixin, NeverCacheMixin, FormView):
             self.request.session['warn'] = True
 
         service = self.request.GET.get('service')
-        paramNext = self.request.GET.get('next')
+        next_parameter = self.request.GET.get('next')
 
         if service:
             st = ServiceTicket.objects.create_ticket(service=service, user=self.request.user, primary=True)
             return redirect(service, params={'ticket': st.ticket})
-        elif paramNext:
-            return django_redirect(paramNext)
+        elif next_parameter:
+            return django_redirect(next_parameter)
         return redirect('cas_login')
 
 
