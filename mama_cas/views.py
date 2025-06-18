@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
 from django.http import HttpResponse
+from django.shortcuts import redirect as django_redirect
 from django.utils.translation import gettext as _
 from django.views.generic import FormView
 from django.views.generic import TemplateView
@@ -143,9 +144,13 @@ class LoginView(CsrfProtectMixin, NeverCacheMixin, FormView):
             self.request.session['warn'] = True
 
         service = self.request.GET.get('service')
+        paramNext = self.request.GET.get('next')
+
         if service:
             st = ServiceTicket.objects.create_ticket(service=service, user=self.request.user, primary=True)
             return redirect(service, params={'ticket': st.ticket})
+        elif paramNext:
+            return django_redirect(paramNext)
         return redirect('cas_login')
 
 
